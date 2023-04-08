@@ -1,0 +1,80 @@
+//工單指派頁
+		users u1 = new implUsers().selectId(user_id);
+		users u3 = new implUsers().selectId(wo.getSubmitter_id());//提交者
+		int sch_id = u1.getSchool();//取得使用者所屬分校
+		schools s_name = new implSchools().selectId(wo.getSchool_id());
+		order_type ot2 = new implOrder_type().selectId(wo.getOrder_type_id());
+
+JComboBox assign_comboBox = new JComboBox();
+		assign_comboBox.setBounds(75, 128, 150, 23);
+		panel.add(assign_comboBox);
+		List<users> u2 = new implUsers().querypermission_id2();
+		for(users o:u2) {
+			String user_name =  o.getUser_name();
+			assign_comboBox.addItem(user_name);
+		}
+		assign_comboBox.setSelectedIndex(0); 
+		
+		JLabel assign_mana_show = new JLabel((String) null);
+		assign_mana_show.setBounds(75, 103, 150, 15);
+		panel.add(assign_mana_show);
+		assign_mana_show.setText(u1.getUser_name());
+		
+		JLabel school_show = new JLabel((String) null);
+		school_show.setBounds(75, 10, 150, 15);
+		panel.add(school_show);
+		school_show.setText(s_name.getSchool_name());
+		
+		JLabel type_show = new JLabel((String) null);
+		type_show.setBounds(75, 72, 150, 15);
+		panel.add(type_show);
+		type_show.setText(ot2.getType_name());
+		
+		//指派人員選單
+		assign_comboBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				int assign_sel =0;
+				users u =new users();
+				assign_sel = assign_comboBox.getSelectedIndex();	//從0開始算，要+1
+				for(int n =0; n <= assign_sel;n++) {
+		        	u = u2.get(assign_sel);
+		        }			
+				wo.setGeneral_affairs_id(u.getId());
+			}
+		});
+			
+		
+		//提交工單指定處理人員,返回工單進度頁面
+		check_Button.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				wo.setContent(textArea.getText());
+				wo.setAssignment_id(user_id);
+				new implWork_order().update_assign(wo);
+				
+				work_order_schedule.wos_frame = new work_order_schedule(user_id,p1);
+				awo2_frame.setVisible(false);
+				work_order_schedule.wos_frame.setVisible(true);
+        		dispose();
+			}
+		});
+		
+		//取消指定，返回指定頁面
+		return_Button.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				assign_work_order.awo_frame = new assign_work_order(user_id,p1);
+				awo2_frame.setVisible(false);
+				assign_work_order.awo_frame.setVisible(true);
+        		dispose();
+			}
+		});
+		
+	}
+	
+	//抓取時間
+	public String getDateTime(){
+		SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss");
+		Date date = new Date();
+		String strDate = sdFormat.format(date);
+		return strDate;
+	}

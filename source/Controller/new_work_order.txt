@@ -1,0 +1,61 @@
+//新增工單頁
+
+		JComboBox school_comboBox = new JComboBox();
+		school_comboBox.setBounds(75, 6, 150, 23);
+		panel.add(school_comboBox);
+		List<schools> ls = new implSchools().selectAll();
+		for(schools o:ls) {
+			String sch_name =  o.getSchool_name();
+			school_comboBox.addItem(sch_name);
+		}
+		
+		
+		JComboBox type_comboBox = new JComboBox();
+		type_comboBox.setBounds(75, 64, 150, 23);
+		panel.add(type_comboBox);
+		List<order_type> ot = new implOrder_type().selectAll();
+		for(order_type o:ot) {
+			String typ_name =  o.getType_name();
+			type_comboBox.addItem(typ_name);
+		}
+//學校選單
+		school_comboBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				//String sch_Sel = (String) school_comboBox.getSelectedItem(); //取得cpu選項
+				int sch_sel2 =0;
+				sch_sel2 = school_comboBox.getSelectedIndex();	//從0開始算，要+1
+				wo.setSchool_id(sch_sel2+1);
+                
+			}
+		});
+		
+		//工單類型選單
+		type_comboBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				int type_sel2 =0;
+				type_sel2 = type_comboBox.getSelectedIndex();	//從0開始算，要+1
+				wo.setOrder_type_id(type_sel2+1);
+			}
+		});
+			
+		
+		//提交產生新工單
+		check_Button.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				wo.setContent(textArea.getText());
+				wo.setCreated_at(getDateTime());
+				wo.setFake(0);
+				new implWork_order().add(wo);
+			}
+		});
+		
+	}
+	
+	//抓取時間
+	public String getDateTime(){
+		SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss");
+		Date date = new Date();
+		String strDate = sdFormat.format(date);
+		return strDate;
+	}

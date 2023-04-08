@@ -1,0 +1,118 @@
+package server;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.JButton;
+
+import Dao.implOrder_type;
+import Dao.implUsers;
+import Dao.implWork_order;
+import Model.order_type;
+import Model.users;
+import Model.work_order;
+
+public class show {
+	private String workorder = ""; //工單
+	
+	//顯示未指派工單
+	public String show_unassign_workorder(){
+		
+		List<work_order> l1 = new implWork_order().select_unassign();
+		
+		for(work_order o:l1) {
+			users u1 = new implUsers().selectId(o.getSubmitter_id());
+			order_type ot = new implOrder_type().selectId(o.getOrder_type_id());
+			workorder = workorder + "時間:"+o.getCreated_at()+
+					"\t申請人:"+u1.getUser_name()+
+					"\t種類:"+ot.getType_name()+
+					"\t內容:"+o.getContent()
+					+"\n";
+
+		}
+		
+		return workorder;
+	}
+	
+	//顯示已指派工單
+	public String show_assign_workorder(){
+			
+		List<work_order> l1 = new implWork_order().select_assign();
+			
+		for(work_order o:l1) {
+			users u1 = new implUsers().selectId(o.getSubmitter_id());
+			order_type ot = new implOrder_type().selectId(o.getOrder_type_id());
+			users u2 = new implUsers().selectId(o.getAssignment_id());
+			users u3 = new implUsers().selectId(o.getGeneral_affairs_id());
+			workorder = workorder + "時間:"+o.getCreated_at()+
+					"\t申請人:"+u1.getUser_name()+
+					"\t種類:"+ot.getType_name()+
+					"\t內容:"+o.getContent()+
+					"\n"+
+					"指派者:"+u2.getUser_name()+
+					"\t處理人員:"+u3.getUser_name()
+					+"\n";
+
+		}
+			
+		return workorder;
+	}
+		
+	//顯示已完成未驗收工單
+	public String show_uninspect_workorder(){
+					
+		List<work_order> l1 = new implWork_order().select_uninspect();
+					
+		for(work_order o:l1) {
+			users u1 = new implUsers().selectId(o.getSubmitter_id());
+			order_type ot = new implOrder_type().selectId(o.getOrder_type_id());
+			users u2 = new implUsers().selectId(o.getAssignment_id());
+			users u3 = new implUsers().selectId(o.getGeneral_affairs_id());
+			workorder = workorder + "時間:"+o.getCreated_at()+
+					"\t申請人:"+u1.getUser_name()+
+					"\t種類:"+ot.getType_name()+
+					"\t內容:"+o.getContent()+
+					"\n"+
+					"指派者:"+u2.getUser_name()+
+					"\t處理人員:"+u3.getUser_name()+
+					"\t完成時間:"+o.getEnd_time()+
+					"\n"+
+					"備註:"+o.getRemark()
+					+"\n";
+
+		}
+					
+		return workorder;
+	}
+	
+	//顯示已驗收工單
+	public String show_inspect_workorder(){
+						
+		List<work_order> l1 = new implWork_order().select_inspect();
+						
+		for(work_order o:l1) {
+			users u1 = new implUsers().selectId(o.getSubmitter_id());
+			order_type ot = new implOrder_type().selectId(o.getOrder_type_id());
+			users u2 = new implUsers().selectId(o.getAssignment_id());
+			users u3 = new implUsers().selectId(o.getGeneral_affairs_id());
+			users u4 = new implUsers().selectId(o.getInspector_user_id());
+			workorder = workorder + "時間:"+o.getCreated_at()+
+					"\t申請人:"+u1.getUser_name()+
+					"\t種類:"+ot.getType_name()+
+					"\t內容:"+o.getContent()+
+					"\n"+
+					"指派者:"+u2.getUser_name()+
+					"\t處理人員:"+u3.getUser_name()+
+					"\t完成時間:"+o.getEnd_time()+
+					"\n"+
+					"備註:"+o.getRemark()+
+					"\t驗收人員:"+u4.getUser_name()+
+					"\t驗收時間:"+o.getInspector_at()
+					+"\n";
+
+		}
+						
+		return workorder;
+	}
+
+}

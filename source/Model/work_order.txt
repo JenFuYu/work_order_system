@@ -1,0 +1,30 @@
+public class work_order {
+	private Integer id;
+	private Integer school_id;
+	private Integer submitter_id;
+	private String created_at; 
+	private Integer order_type_id;
+	private String content; 
+	private Integer assignment_id;
+	private Integer general_affairs_id;
+	private String end_time;
+	private String remark;
+	private Integer inspector_user_id;
+	private String inspector_at;
+	private Integer delete_user_id;
+	private Integer fake;
+	private String deleted_at;
+	public work_order(Integer school_id, Integer submitter_id, String created_at, Integer order_type_id, String content,
+			Integer fake) {
+		super();
+		this.school_id = school_id;
+		this.submitter_id = submitter_id;
+		this.created_at = created_at;
+		this.order_type_id = order_type_id;
+		this.content = content;
+		this.fake = fake;
+	}
+	public work_order() {
+		super();
+	}
+}

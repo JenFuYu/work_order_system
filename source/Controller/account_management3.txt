@@ -1,0 +1,133 @@
+JComboBox school_comboBox = new JComboBox();
+		school_comboBox.setBounds(86, 223, 167, 23);
+		panel.add(school_comboBox);
+		List<schools> s2 = new implSchools().selectAll();
+		for(schools o:s2) {
+			String school_name =  o.getSchool_name();
+			school_comboBox.addItem(school_name);
+		}
+		school_comboBox.setSelectedIndex(0); 		//設定初始值。SelectedIndex從0開始，school_id從1開始
+		
+		JComboBox permission_comboBox = new JComboBox();
+		permission_comboBox.setBounds(86, 254, 167, 23);
+		panel.add(permission_comboBox);
+		List<permission_set> p2 = new implPermission_set().selectAll();
+		for(permission_set o:p2) {
+			String permission_name =  o.getPosition_name();
+			permission_comboBox.addItem(permission_name);
+		}
+		permission_comboBox.setSelectedIndex(0); 		//設定初始值。SelectedIndex從0開始，school_id從1開始
+		
+		JLabel lblNewLabel_1_3 = new JLabel("密碼 : ");
+		lblNewLabel_1_3.setBounds(10, 42, 66, 15);
+		panel.add(lblNewLabel_1_3);
+		
+		JLabel lblNewLabel_2_1 = new JLabel("※格式為YYYY-MM-DD");
+		lblNewLabel_2_1.setBounds(263, 165, 188, 15);
+		panel.add(lblNewLabel_2_1);
+		
+		JLabel check_show = new JLabel("");
+		check_show.setBounds(411, 372, 213, 15);
+		panel.add(check_show);
+		
+		JLabel lblNewLabel_2_1_1 = new JLabel("※請輸入信箱");
+		lblNewLabel_2_1_1.setBounds(259, 10, 188, 15);
+		panel.add(lblNewLabel_2_1_1);
+		
+		
+		
+		//school選單操作
+		school_comboBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				int school_sel =0;
+				schools s =new schools();
+				school_sel = school_comboBox.getSelectedIndex();	//從0開始算
+				for(int n =0; n <= school_sel;n++) {
+		        	s = s2.get(school_sel);			//從List<schools> s2的第school_sel個取值
+		        }			
+				u2.setSchool(s.getId());
+			}
+		});
+		
+		//權限選單操作
+		permission_comboBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				int per_sel =0;
+				permission_set p =new permission_set();
+				per_sel = permission_comboBox.getSelectedIndex();	//從0開始算
+				for(int n =0; n <= per_sel;n++) {
+		        	p = p2.get(per_sel);			
+		        }			
+				u2.setPermission_id(p.getId());
+			}
+		});
+		
+		//進行資料變更,返回帳號管理頁面
+		check_Button.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				Boolean check_cus = new implUsers().querycustomer(ema_textField.getText(),password_textField.getText());
+				String pattern = "[A-Za-z0-9]{1,20}@\\D{1,20}";
+				String pattern2 = "\\d";	//性別欄輸入限制
+				String pattern3 = "\\d{4}-\\d{2}-\\d{2}";	//生日欄輸入限制
+				String pattern4 = "\\d{9,10}";	//電話欄輸入限制
+				
+				
+				if(check_cus) {
+					check_show.setText("帳號重複，請重新設定");
+					ema_textField.setText("");
+				}else if(!ema_textField.getText().matches(pattern)){
+					check_show.setText("帳號輸入錯誤，請重新設定");
+					ema_textField.setText("");
+				}else if(!gen_textField.getText().matches(pattern2)) {
+					check_show.setText("性別輸入錯誤，請重新設定");
+					gen_textField.setText("");
+				}else if(!bir_textField.getText().matches(pattern3)) {
+					check_show.setText("生日格式輸入錯誤，請重新設定");
+					bir_textField.setText("");
+				}
+				else if(!cel_textField.getText().matches(pattern4)) {
+					check_show.setText("電話輸入錯誤，請重新設定");
+					cel_textField.setText("");
+				}else {
+					u2.setEmail(ema_textField.getText());
+					u2.setUser_name(name_textField.getText());
+					u2.setEnglish_name(eng_name_textField.getText());
+					u2.setGender(Integer.parseInt(gen_textField.getText()));
+					u2.setPassword(password_textField.getText());
+					u2.setBirth_date(bir_textField.getText());
+					u2.setCell_phone(cel_textField.getText());
+					u2.setSchool(school_comboBox.getSelectedIndex()+1);
+					u2.setPermission_id(permission_comboBox.getSelectedIndex()+1);
+					u2.setCreated_at(getDateTime());
+					u2.setFake(0);
+					new implUsers().add(u2);
+					
+					account_management.am_frame = new account_management(user_id,p1);
+					am3_frame.setVisible(false);
+					account_management.am_frame.setVisible(true);
+	        		dispose();
+				}
+
+			}
+		});
+		
+		//取消變更，返回帳號管理
+		return_Button.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				account_management.am_frame = new account_management(user_id,p1);
+				am3_frame.setVisible(false);
+				account_management.am_frame.setVisible(true);
+        		dispose();
+			}
+		});
+		
+	}
+	
+	//抓取時間
+	public String getDateTime(){
+		SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss");
+		Date date = new Date();
+		String strDate = sdFormat.format(date);
+		return strDate;
+	}

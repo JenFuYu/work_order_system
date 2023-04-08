@@ -1,0 +1,370 @@
+package Dao;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+import Model.order_type;
+import Model.permission_set;
+import Model.users;
+import server.hash;
+
+public class implUsers implements usersDao{
+
+	public static void main(String[] args) {
+		//System.out.print(DBconnection.getDB());
+		/*users p = new users("總務測試帳號","test2","def@gmail.com","1234",2,"2000-01-01","0900000001",2,"2023-02-13 14:58:00",0);
+		new implUsers().add(p);*/
+		//System.out.print(new implUsers().selectAll());
+		/*users p = new implUsers().selectId(2);
+		p.setGender(1);
+		new implUsers().update(p);*/
+
+	}
+
+	@Override
+	public void add(users s) {
+		Connection conn =DBconnection.getDB();
+		String SQL = "insert into users(user_name,english_name,email,password,gender,birth_date,"
+				+ "cell_phone,school,permission_id,created_at,fake)"
+				+ "values(?,?,?,?,?,?,?,?,?,?,?)";
+		
+		try {
+			PreparedStatement ps = conn.prepareStatement(SQL);
+			ps.setString(1, s.getUser_name());
+			ps.setString(2, s.getEnglish_name());
+			ps.setString(3, s.getEmail());
+			ps.setString(4, s.getPassword());
+			ps.setInt(5, s.getGender());
+			ps.setString(6, s.getBirth_date());
+			ps.setString(7, s.getCell_phone());
+			ps.setInt(8, s.getSchool());
+			ps.setInt(9, s.getPermission_id());
+			ps.setString(10, s.getCreated_at());
+			ps.setInt(11, s.getFake());
+			
+			ps.executeUpdate();
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+
+	@Override
+	public List<users> selectAll() {
+		Connection conn =DBconnection.getDB();
+		String SQL = "select * from users";
+		//String SQL = "select * from order_type where fake = 0";
+		List<users> l1 = new ArrayList();
+		
+		try {
+			PreparedStatement p = conn.prepareStatement(SQL);
+			ResultSet rs = p.executeQuery();
+			
+			while(rs.next()) {
+				users u1 = new users();
+				u1.setId(rs.getInt("id"));
+				u1.setUser_name(rs.getString("user_name"));
+				u1.setEnglish_name(rs.getString("english_name"));
+				u1.setEmail(rs.getString("email"));
+				u1.setPassword(rs.getString("password"));
+				u1.setGender(rs.getInt("gender"));
+				u1.setBirth_date(rs.getString("birth_date"));
+				u1.setCell_phone(rs.getString("cell_phone"));
+				u1.setSchool(rs.getInt("school"));
+				u1.setPermission_id(rs.getInt("permission_id"));
+				u1.setCreated_at(rs.getString("created_at"));
+
+				l1.add(u1);
+			}
+					
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		return l1;
+	}
+
+	@Override
+	public users selectId(int Id) {
+		Connection conn =DBconnection.getDB();
+		String SQL = "select * from users where id = ?";
+		users u1 = null;					//因為搜id只會有一筆，所以不用list
+		
+		try {
+			PreparedStatement ps = conn.prepareStatement(SQL);
+			ps.setInt(1, Id);
+			ResultSet rs = ps.executeQuery();
+			
+			if(rs.next()) {
+				u1=new users();
+				u1.setId(rs.getInt("id"));
+				u1.setUser_name(rs.getString("user_name"));
+				u1.setEnglish_name(rs.getString("english_name"));
+				u1.setEmail(rs.getString("email"));
+				u1.setPassword(rs.getString("password"));
+				u1.setGender(rs.getInt("gender"));
+				u1.setBirth_date(rs.getString("birth_date"));
+				u1.setCell_phone(rs.getString("cell_phone"));
+				u1.setSchool(rs.getInt("school"));
+				u1.setPermission_id(rs.getInt("permission_id"));
+				u1.setCreated_at(rs.getString("created_at"));
+			}
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return u1;
+	}
+	
+	
+
+	@Override
+	public void update(users s) {
+		Connection conn =DBconnection.getDB();
+		String SQL = "update users set user_name = ?,english_name = ?,email = ?,password = ?,gender = ?,birth_date = ?,cell_phone = ?,school = ?,permission_id = ?,updated_at = ? where id = ?";
+
+		try {
+			PreparedStatement ps = conn.prepareStatement(SQL);
+			ps.setString(1, s.getUser_name());
+			ps.setString(2, s.getEnglish_name());
+			ps.setString(3, s.getEmail());
+			ps.setString(4, s.getPassword());
+			ps.setInt(5, s.getGender());
+			ps.setString(6, s.getBirth_date());
+			ps.setString(7, s.getCell_phone());
+			ps.setInt(8, s.getSchool());
+			ps.setInt(9, s.getPermission_id());
+			ps.setString(10, s.getUpdated_at());
+			ps.setInt(11, s.getId());
+			
+			ps.executeUpdate();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+	}
+
+	@Override
+	public void delete(int Id) {
+		Connection conn =DBconnection.getDB();
+		String SQL = "delete from users where id = ?";
+		users u1 = null;			
+		
+		try {
+			PreparedStatement ps = conn.prepareStatement(SQL);
+			ps.setInt(1, Id);
+			
+			ps.executeUpdate();
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
+	//確認是否有該帳號存在
+	@Override
+	public boolean querycustomer(String email, String password) {
+		Connection conn =DBconnection.getDB();
+		String SQL = "Select * from users where email=? and password= ?";
+		Boolean check_cus = false;
+		password = new hash().change_MD5(password);		//密碼加密
+		
+		try {
+			PreparedStatement ps = conn.prepareStatement(SQL);
+			ps.setString(1, email);
+			ps.setString(2, password);
+			ResultSet rs = ps.executeQuery();
+			
+			if(rs.next()){
+				check_cus = true;
+			}
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return check_cus;
+	}
+	
+	//確認帳號是否重複
+		@Override
+		public boolean queryemail(String email) {
+			Connection conn =DBconnection.getDB();
+			String SQL = "Select * from users where email=?";
+			Boolean check_cus = false;
+			
+			try {
+				PreparedStatement ps = conn.prepareStatement(SQL);
+				ps.setString(1, email);
+				ResultSet rs = ps.executeQuery();
+				
+				if(rs.next()){
+					check_cus = true;
+				}
+				
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			return check_cus;
+		}
+
+	//取得帳號身分id,權限
+	@Override
+	public users querymember(String email, String password) {
+		Connection conn =DBconnection.getDB();
+		String SQL = "Select * from users where email=? and password= ?";
+		users u1 = null;
+		password = new hash().change_MD5(password);		//密碼加密
+		
+		try {
+			PreparedStatement ps = conn.prepareStatement(SQL);
+			ps.setString(1, email);
+			ps.setString(2, password);
+			ResultSet rs = ps.executeQuery();
+			
+			if(rs.next()){
+				u1= new users();
+				u1.setId(rs.getInt("id"));
+				u1.setPermission_id(rs.getInt("permission_id"));
+			}else {
+				System.out.println("查無資料");
+			}
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return u1;
+	}
+
+	//取得總務帳號
+	@Override
+	public List<users> querypermission_id2() {
+		Connection conn =DBconnection.getDB();
+		String SQL = "select * from users where permission_id = 2";
+		List<users> l1 = new ArrayList();
+		
+		try {
+			PreparedStatement ps = conn.prepareStatement(SQL);
+			ResultSet rs = ps.executeQuery();
+				
+			while(rs.next()) {
+				users u1 = new users();
+				u1.setId(rs.getInt("id"));
+				u1.setUser_name(rs.getString("user_name"));
+				u1.setEnglish_name(rs.getString("english_name"));
+				u1.setEmail(rs.getString("email"));
+				u1.setPassword(rs.getString("password"));
+				u1.setGender(rs.getInt("gender"));
+				u1.setBirth_date(rs.getString("birth_date"));
+				u1.setCell_phone(rs.getString("cell_phone"));
+				u1.setSchool(rs.getInt("school"));
+				u1.setPermission_id(rs.getInt("permission_id"));
+				u1.setCreated_at(rs.getString("created_at"));
+
+				l1.add(u1);
+			}
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return l1;
+	}
+	
+	//帳號管理頁搜索
+	@Override
+	public List<users> querymember(String email, String user_name, String cell_phone) {
+		Connection conn =DBconnection.getDB();
+		String SQL = "Select * from users where email like ? or user_name like ? or cell_phone like ?";
+		List<users> l1 = new ArrayList();
+		
+		email = "%"+email+"%";
+		user_name = "%"+user_name+"%";
+		cell_phone = "%"+cell_phone+"%";
+		
+		try {
+			PreparedStatement ps = conn.prepareStatement(SQL);
+			ps.setString(1, email);
+			ps.setString(2, user_name);
+			ps.setString(3, cell_phone);
+			ResultSet rs = ps.executeQuery();
+			
+			while(rs.next()) {
+				users u1 = new users();
+				u1.setId(rs.getInt("id"));
+				u1.setUser_name(rs.getString("user_name"));
+				u1.setEnglish_name(rs.getString("english_name"));
+				u1.setEmail(rs.getString("email"));
+				u1.setCell_phone(rs.getString("cell_phone"));
+				u1.setSchool(rs.getInt("school"));
+				u1.setPermission_id(rs.getInt("permission_id"));
+
+				l1.add(u1);
+			}
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return l1;
+	}
+	
+	//用email找帳號資料
+	@Override
+	public users query_sel_email(String email) {
+		Connection conn =DBconnection.getDB();
+		String SQL = "Select * from users where email=?";
+		users u1 = null;
+		
+		try {
+			PreparedStatement ps = conn.prepareStatement(SQL);
+			ps.setString(1, email);
+			ResultSet rs = ps.executeQuery();
+			
+			if(rs.next()){
+				u1= new users();
+				u1.setId(rs.getInt("id"));
+				u1.setUser_name(rs.getString("user_name"));
+				u1.setEnglish_name(rs.getString("english_name"));
+				u1.setEmail(rs.getString("email"));
+				u1.setPassword(rs.getString("password"));
+				u1.setGender(rs.getInt("gender"));
+				u1.setBirth_date(rs.getString("birth_date"));
+				u1.setCell_phone(rs.getString("cell_phone"));
+				u1.setSchool(rs.getInt("school"));
+				u1.setPermission_id(rs.getInt("permission_id"));
+				u1.setCreated_at(rs.getString("created_at"));
+			}else {
+				System.out.println("查無資料");
+			}
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return u1;
+	}
+
+}

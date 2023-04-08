@@ -1,0 +1,19 @@
+public class order_type {
+	private Integer id;
+	private String type_name;
+	private String created_at;
+	private String updated_at;
+	private String deleted_at;
+	private Integer fake;
+	
+	
+	public order_type(String type_name, String created_at, Integer fake) {
+		super();
+		this.type_name = type_name;
+		this.created_at = created_at;
+		this.fake = fake;
+	}
+	public order_type() {
+		super();
+	}
+}

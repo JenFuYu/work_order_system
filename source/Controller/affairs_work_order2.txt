@@ -1,0 +1,44 @@
+//工單完成提交頁
+
+		users u1 = new implUsers().selectId(user_id);
+		int sch_id = u1.getSchool();//取得使用者所屬分校
+		users u2 = new implUsers().selectId(wo.getSubmitter_id());//提交者
+		schools s_name = new implSchools().selectId(wo.getSchool_id());
+		users u3 = new implUsers().selectId(wo.getAssignment_id());
+		order_type ot2 = new implOrder_type().selectId(wo.getOrder_type_id());
+
+		//提交工單指定處理人員,返回工單進度頁面
+		check_Button.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				wo.setContent(textArea.getText());
+				wo.setRemark(remark_textArea.getText());
+				wo.setEnd_time(getDateTime());
+				new implWork_order().update_affairs(wo);
+				
+				work_order_schedule.wos_frame = new work_order_schedule(user_id,p1);
+				afwo2_frame.setVisible(false);
+				work_order_schedule.wos_frame.setVisible(true);
+        		dispose();
+			}
+		});
+		
+		//取消指定，返回進度頁面
+		return_Button.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				affairs_work_order.afwo_frame = new affairs_work_order(user_id,p1);
+				afwo2_frame.setVisible(false);
+				affairs_work_order.afwo_frame.setVisible(true);
+        		dispose();
+			}
+		});
+		
+	}
+	
+	//抓取時間
+	public String getDateTime(){
+		SimpleDateFormat sdFormat = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss");
+		Date date = new Date();
+		String strDate = sdFormat.format(date);
+		return strDate;
+	}

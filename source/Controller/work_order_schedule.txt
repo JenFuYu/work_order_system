@@ -1,0 +1,41 @@
+//工單進度顯示頁
+
+//顯示已指派工單
+		assign_Button.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				textArea.setText(" ");
+				textArea.setText(new show().show_assign_workorder());
+			}
+		});
+		//顯示需驗收工單
+		uninspect_Button.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				textArea.setText(" ");
+				textArea.setText(new show().show_uninspect_workorder());
+			}
+		});
+		//顯示未指派工單
+		no_assign_Button.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				textArea.setText(" ");
+				textArea.setText(new show().show_unassign_workorder());
+			}
+		});
+		
+		//登出
+		logout_Button.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				logout_Button.addMouseListener(new MouseAdapter() {
+					@Override
+					public void mouseClicked(MouseEvent e) {
+						new re_directed().change_index();
+						wos_frame.setVisible(false);
+		        		dispose();
+					}
+				});
+			}
+		});

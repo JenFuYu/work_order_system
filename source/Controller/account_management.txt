@@ -1,0 +1,109 @@
+帳號管理頁面
+
+權限管理按鈕顯示
+		if(p1.getSub_function() == 1) {
+			JButton New_workorder_Button = new JButton("新增工單");
+			New_workorder_Button.setBounds(10, 120, 120, 40);
+			contentPane.add(New_workorder_Button);
+			
+			New_workorder_Button.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					new re_directed().change_new_work_order(user_id,p1);
+					am_frame.setVisible(false);
+	        		dispose();
+				}
+			});
+		}
+		
+		if(p1.getSchedule_function() == 1) {
+			JButton workorder_schedule_Button = new JButton("工單進度顯示");
+			workorder_schedule_Button.setBounds(10, 170, 120, 40);
+			contentPane.add(workorder_schedule_Button);
+			
+			workorder_schedule_Button.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					new re_directed().change_work_order_schedule(user_id,p1);
+					am_frame.setVisible(false);
+	        		dispose();
+				}
+			});
+		}
+		
+		if(p1.getInspect_function() == 1) {
+			JButton workorder_inspect_Button = new JButton("工單驗收");
+			workorder_inspect_Button.setBounds(10, 220, 120, 40);
+			contentPane.add(workorder_inspect_Button);
+    		workorder_inspect_Button.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					new re_directed().change_inspect_work_order(user_id,p1);
+					am_frame.setVisible(false);
+		    		dispose();
+				}
+			});
+		}
+
+
+使用JScrollPane()顯示資料
+
+	addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowActivated(WindowEvent e) {
+                do_this_windowActivated(e);
+            }
+        });
+
+	JScrollPane scrollPane = new JScrollPane();		//新增JScrollPane
+	panel.add(scrollPane, BorderLayout.CENTER);		//用center讓JScrollPane跟panel同大小
+	table = new JTable();							//新增欄位table
+        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        
+
+//搭配model顯示欄位
+protected void do_this_windowActivated(WindowEvent e) {
+    	List<users> l1 = new implUsers().selectAll();		//取得已驗收資料
+        DefaultTableModel model = (DefaultTableModel) table.getModel();
+        model.setRowCount(0);
+        model.setColumnIdentifiers(new Object[] { "帳號", "姓名", "分校", "權限"});		//設計table
+        
+        for(users o:l1) {
+			permission_set ps = new implPermission_set().selectId(o.getPermission_id());
+			schools s1 = new implSchools().selectId(o.getSchool());
+			model.addRow(new Object[] { o.getEmail(), o.getUser_name(), s1.getSchool_name(), ps.getPosition_name()});
+		}
+        table.setModel(model);
+}
+
+		/*
+		前往history_work_order2
+		*/
+		check_Button.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				users wo2=null;
+				DefaultTableModel model = (DefaultTableModel) table.getModel();
+		        int index = table.getSelectedRow();
+		        List<users> l1 = new implUsers().selectAll();
+		        for(int n =0; n <= index;n++) {
+		        	wo2 = l1.get(index);
+		        }
+				
+		        account_management2.am2_frame = new account_management2(user_id,p1,wo2);
+		        am_frame.setVisible(false);
+		        account_management2.am2_frame.setVisible(true);
+        		dispose();
+			}
+		});
+		
+		//新增帳號
+		create_Button.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				users wo2=null;
+				account_management3.am3_frame = new account_management3(user_id,p1,wo2);
+		        am_frame.setVisible(false);
+		        account_management3.am3_frame.setVisible(true);
+        		dispose();
+			}
+		});

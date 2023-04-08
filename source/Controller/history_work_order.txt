@@ -1,0 +1,61 @@
+裡使工單選擇頁
+
+JPanel panel = new JPanel();
+		panel.setBackground(new Color(128, 255, 255));
+		panel.setBounds(140, 135, 634, 366);
+		contentPane.add(panel);
+		panel.setLayout(new BorderLayout());
+		
+		JScrollPane scrollPane = new JScrollPane();		//新增JScrollPane
+		panel.add(scrollPane, BorderLayout.CENTER);		//用center讓JScrollPane跟panel同大小
+		table = new JTable();							//新增欄位table
+        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        table.setFont(new Font("微軟雅黑", Font.PLAIN, 14));
+        table.setRowHeight(30);
+        JTableHeader header = table.getTableHeader();
+        header.setFont(new Font("微軟雅黑", Font.PLAIN, 16));
+        header.setPreferredSize(new Dimension(header.getWidth(), 35));
+        scrollPane.setViewportView(table);
+		
+
+		
+		JButton check_Button = new JButton("查看工單");
+		check_Button.setBounds(654, 511, 120, 40);
+		contentPane.add(check_Button);
+		
+		/*
+		前往history_work_order2
+		*/
+		check_Button.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				work_order wo2=null;
+				DefaultTableModel model = (DefaultTableModel) table.getModel();
+		        int index = table.getSelectedRow();
+		        List<work_order> l1 = new implWork_order().select_inspect();
+		        for(int n =0; n <= index;n++) {
+		        	wo2 = l1.get(index);
+		        }
+				
+		        history_work_order2.hwo2_frame = new history_work_order2(user_id,p1,wo2);
+		        hwo_frame.setVisible(false);
+		        history_work_order2.hwo2_frame.setVisible(true);
+        		dispose();
+			}
+		});
+		
+	}
+    
+    protected void do_this_windowActivated(WindowEvent e) {
+    	List<work_order> l1 = new implWork_order().select_inspect();		//取得已驗收資料
+		
+        DefaultTableModel model = (DefaultTableModel) table.getModel();
+        model.setRowCount(0);
+        model.setColumnIdentifiers(new Object[] { "時間", "分校", "種類", "內容"});		//設計table
+        
+        for(work_order o:l1) {
+			order_type ot = new implOrder_type().selectId(o.getOrder_type_id());
+			schools s1 = new implSchools().selectId(o.getSchool_id());
+			model.addRow(new Object[] { o.getCreated_at(), s1.getSchool_name(), ot.getType_name(), o.getContent()});
+		}
+        table.setModel(model);
+    }

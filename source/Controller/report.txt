@@ -1,0 +1,222 @@
+//報表頁
+
+//下載已完成工單
+		dow_Button1.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				List<work_order> l1 = new implWork_order().select_inspect();
+				/** Excel 檔案要存放的位置 */
+				String outputFile = "end_work_order.xls";
+			    HSSFSheet sheet = null;
+			    HSSFWorkbook excelbook=new HSSFWorkbook();
+			    // 定義產生Excel表格方法
+			    try {
+			        sheet = excelbook.createSheet("已完成工單"); // 在索引0的位置建立行（最頂端的行）
+			        HSSFRow row = sheet.createRow((short) 0);
+			        HSSFCell monadism = row.createCell((short) 0); // 在索引0的位置建立單元格（左上端）
+			        monadism.setCellType(HSSFCell.CELL_TYPE_STRING); // 定義單元格為字串型態
+			        monadism.setCellValue("分校");// 在單元格中輸入一些內容
+			        row.createCell((short) 1).setCellValue("工單提交時間"); // 在第一行第二列增加內容
+			        row.createCell((short) 2).setCellValue("提交人員");
+			        row.createCell((short) 3).setCellValue("工單類型");
+			        row.createCell((short) 4).setCellValue("內容");
+			        row.createCell((short) 5).setCellValue("指派主管");
+			        row.createCell((short) 6).setCellValue("處理人員");
+			        row.createCell((short) 7).setCellValue("完成時間");
+			        row.createCell((short) 8).setCellValue("備註");
+			        row.createCell((short) 9).setCellValue("驗收人員");
+			        row.createCell((short) 10).setCellValue("驗收時間");
+			        
+			        for(work_order o:l1) {
+			        	schools s_name = new implSchools().selectId(o.getSchool_id());//分校資料
+			        	users u2 = new implUsers().selectId(o.getSubmitter_id());//提交者
+			        	users u3 = new implUsers().selectId(o.getAssignment_id());//指派者
+			    		users u4 = new implUsers().selectId(o.getGeneral_affairs_id());//處理人員
+			    		order_type ot2 = new implOrder_type().selectId(o.getOrder_type_id());//問題類型
+			    		users u5 = new implUsers().selectId(o.getInspector_user_id());//驗收人員
+			    		
+			        	int count = sheet.getPhysicalNumberOfRows(); 		//獲得工作表中總體行數
+			        	row = sheet.createRow((short) count);       		//新增一行
+			        	row.createCell((short) 0).setCellValue(s_name.getSchool_name());	// 增加內容
+			        	row.createCell((short) 1).setCellValue(o.getCreated_at()); 
+				        row.createCell((short) 2).setCellValue(u2.getUser_name());
+				        row.createCell((short) 3).setCellValue(ot2.getType_name());
+				        row.createCell((short) 4).setCellValue(o.getContent());
+				        row.createCell((short) 5).setCellValue(u3.getUser_name());
+				        row.createCell((short) 6).setCellValue(u4.getUser_name());
+				        row.createCell((short) 7).setCellValue(o.getEnd_time());
+				        row.createCell((short) 8).setCellValue(o.getRemark());
+				        row.createCell((short) 9).setCellValue(u5.getUser_name());
+				        row.createCell((short) 10).setCellValue(o.getInspector_at()); 
+			        }
+			        
+			        FileOutputStream out = new FileOutputStream(outputFile); // 新增輸出檔案流
+			        excelbook.write(out);// 把對應的Excel工作簿存碟
+			        out.flush();
+			        out.close(); // 操作結束，關閉檔案
+			        
+			    } catch (Exception e1) {
+			        e1.printStackTrace();
+			    }
+			}
+		});
+		
+		//下載未完成工單
+		dow_Button2.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				List<work_order> l1 = new implWork_order().select_unassign();	//未指派
+				List<work_order> l2 = new implWork_order().select_assign();		//已指派
+				List<work_order> l3 = new implWork_order().select_uninspect();	//未驗收
+
+				/** Excel 檔案要存放的位置 */
+				String outputFile = "undone_work_order.xls";
+			    HSSFSheet sheet = null;
+			    HSSFWorkbook excelbook=new HSSFWorkbook();
+			    // 定義產生Excel表格方法
+			    try {
+			        sheet = excelbook.createSheet("未完成工單"); // 在索引0的位置建立行（最頂端的行）
+			        HSSFRow row = sheet.createRow((short) 0);
+			        HSSFCell monadism = row.createCell((short) 0); // 在索引0的位置建立單元格（左上端）
+			        monadism.setCellType(HSSFCell.CELL_TYPE_STRING); // 定義單元格為字串型態
+			        monadism.setCellValue("分校");// 在單元格中輸入一些內容
+			        row.createCell((short) 1).setCellValue("工單提交時間"); // 在第一行第二列增加內容
+			        row.createCell((short) 2).setCellValue("提交人員");
+			        row.createCell((short) 3).setCellValue("工單類型");
+			        row.createCell((short) 4).setCellValue("內容");
+			        row.createCell((short) 5).setCellValue("指派主管");
+			        row.createCell((short) 6).setCellValue("處理人員");
+			        row.createCell((short) 7).setCellValue("完成時間");
+			        row.createCell((short) 8).setCellValue("備註");
+			        row.createCell((short) 9).setCellValue("驗收人員");
+			        row.createCell((short) 10).setCellValue("驗收時間");
+			        
+			        for(work_order o:l1) {
+			        	schools s_name = new implSchools().selectId(o.getSchool_id());//分校資料
+			        	users u2 = new implUsers().selectId(o.getSubmitter_id());//提交者
+			    		order_type ot2 = new implOrder_type().selectId(o.getOrder_type_id());//問題類型
+
+			    		
+			        	int count = sheet.getPhysicalNumberOfRows(); 		//獲得工作表中總體行數
+			        	row = sheet.createRow((short) count);       		//新增一行
+			        	row.createCell((short) 0).setCellValue(s_name.getSchool_name());	// 增加內容
+			        	row.createCell((short) 1).setCellValue(o.getCreated_at()); 
+				        row.createCell((short) 2).setCellValue(u2.getUser_name());
+				        row.createCell((short) 3).setCellValue(ot2.getType_name());
+				        row.createCell((short) 4).setCellValue(o.getContent());
+			        }
+			        
+			        for(work_order o:l2) {
+			        	schools s_name = new implSchools().selectId(o.getSchool_id());//分校資料
+			        	users u2 = new implUsers().selectId(o.getSubmitter_id());//提交者
+			        	users u3 = new implUsers().selectId(o.getAssignment_id());//指派者
+			    		users u4 = new implUsers().selectId(o.getGeneral_affairs_id());//處理人員
+			    		order_type ot2 = new implOrder_type().selectId(o.getOrder_type_id());//問題類型
+
+			    		
+			        	int count = sheet.getPhysicalNumberOfRows(); 		//獲得工作表中總體行數
+			        	row = sheet.createRow((short) count);       		//新增一行
+			        	row.createCell((short) 0).setCellValue(s_name.getSchool_name());	// 增加內容
+			        	row.createCell((short) 1).setCellValue(o.getCreated_at()); 
+				        row.createCell((short) 2).setCellValue(u2.getUser_name());
+				        row.createCell((short) 3).setCellValue(ot2.getType_name());
+				        row.createCell((short) 4).setCellValue(o.getContent());
+				        row.createCell((short) 5).setCellValue(u3.getUser_name());
+				        row.createCell((short) 6).setCellValue(u4.getUser_name());
+
+			        }
+			        
+			        for(work_order o:l3) {
+			        	schools s_name = new implSchools().selectId(o.getSchool_id());//分校資料
+			        	users u2 = new implUsers().selectId(o.getSubmitter_id());//提交者
+			        	users u3 = new implUsers().selectId(o.getAssignment_id());//指派者
+			    		users u4 = new implUsers().selectId(o.getGeneral_affairs_id());//處理人員
+			    		order_type ot2 = new implOrder_type().selectId(o.getOrder_type_id());//問題類型
+
+			    		
+			        	int count = sheet.getPhysicalNumberOfRows(); 		//獲得工作表中總體行數
+			        	row = sheet.createRow((short) count);       		//新增一行
+			        	row.createCell((short) 0).setCellValue(s_name.getSchool_name());	// 增加內容
+			        	row.createCell((short) 1).setCellValue(o.getCreated_at()); 
+				        row.createCell((short) 2).setCellValue(u2.getUser_name());
+				        row.createCell((short) 3).setCellValue(ot2.getType_name());
+				        row.createCell((short) 4).setCellValue(o.getContent());
+				        row.createCell((short) 5).setCellValue(u3.getUser_name());
+				        row.createCell((short) 6).setCellValue(u4.getUser_name());
+				        row.createCell((short) 7).setCellValue(o.getEnd_time());
+				        row.createCell((short) 8).setCellValue(o.getRemark());
+
+			        }
+			        
+			        FileOutputStream out = new FileOutputStream(outputFile); // 新增輸出檔案流
+			        excelbook.write(out);// 把對應的Excel工作簿存碟
+			        out.flush();
+			        out.close(); // 操作結束，關閉檔案
+			        
+			    } catch (Exception e1) {
+			        e1.printStackTrace();
+			    }
+			}
+		});
+		
+		//下載員工資料
+		dow_Button3.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				List<users> l1 = new implUsers().selectAll();
+				/** Excel 檔案要存放的位置 */
+				String outputFile = "employee list.xls";
+			    HSSFSheet sheet = null;
+			    HSSFWorkbook excelbook=new HSSFWorkbook();
+			    // 定義產生Excel表格方法
+			    try {
+			        sheet = excelbook.createSheet("員工清單"); // 在索引0的位置建立行（最頂端的行）
+			        HSSFRow row = sheet.createRow((short) 0);
+			        HSSFCell monadism = row.createCell((short) 0); // 在索引0的位置建立單元格（左上端）
+			        monadism.setCellType(HSSFCell.CELL_TYPE_STRING); // 定義單元格為字串型態
+			        monadism.setCellValue("分校");// 在單元格中輸入一些內容
+			        row.createCell((short) 1).setCellValue("姓名"); // 在第一行第二列增加內容
+			        row.createCell((short) 2).setCellValue("英文姓名");
+			        row.createCell((short) 3).setCellValue("郵箱");
+			        row.createCell((short) 4).setCellValue("性別");
+			        row.createCell((short) 5).setCellValue("生日");
+			        row.createCell((short) 6).setCellValue("電話");
+			        row.createCell((short) 7).setCellValue("權限");
+			        row.createCell((short) 8).setCellValue("註冊日期");
+
+			        
+			        for(users o:l1) {
+			        	schools s_name = new implSchools().selectId(o.getSchool());//分校資料
+			        	permission_set ps = new implPermission_set().selectId(o.getPermission_id());
+			        	String gen = null;
+			        	if(o.getGender()==1) {
+			        		gen = "男性";
+			        	}else if(o.getGender()==2) {
+			        		gen = "女性";
+			        	}else {
+			        		gen = "不明";
+			        	}
+			    		
+			        	int count = sheet.getPhysicalNumberOfRows(); 		//獲得工作表中總體行數
+			        	row = sheet.createRow((short) count);       		//新增一行
+			        	row.createCell((short) 0).setCellValue(s_name.getSchool_name());	// 增加內容
+			        	row.createCell((short) 1).setCellValue(o.getUser_name()); 
+				        row.createCell((short) 2).setCellValue(o.getEnglish_name());
+				        row.createCell((short) 3).setCellValue(o.getEmail());
+				        row.createCell((short) 4).setCellValue(gen);
+				        row.createCell((short) 5).setCellValue(o.getBirth_date());
+				        row.createCell((short) 6).setCellValue(o.getCell_phone());
+				        row.createCell((short) 7).setCellValue(ps.getPosition_name());
+				        row.createCell((short) 8).setCellValue(o.getCreated_at());
+			        }
+			        
+			        FileOutputStream out = new FileOutputStream(outputFile); // 新增輸出檔案流
+			        excelbook.write(out);// 把對應的Excel工作簿存碟
+			        out.flush();
+			        out.close(); // 操作結束，關閉檔案
+			        
+			    } catch (Exception e1) {
+			        e1.printStackTrace();
+			    }
+			}
+		});
